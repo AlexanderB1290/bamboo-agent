@@ -1,0 +1,6 @@
+# Ignore changes to following files and folders
+
+.idea
+test/
+tests/
+temp/
