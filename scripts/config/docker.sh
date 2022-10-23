@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DOC_USERNAME=alexbush
+DOC_USERNAME=<docker_hub_username>
 
 # Add user to groups
 usermod -aG docker $RUN_USER
