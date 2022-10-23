@@ -4,3 +4,6 @@
 test/
 tests/
 temp/
+
+# Ignore changes in secrets folder
+secrets
