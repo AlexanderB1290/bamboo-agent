@@ -11,6 +11,10 @@ usermod -aG docker $RUN_USER
 usermod -aG root $RUN_USER
 usermod -aG sudo $RUN_USER
 
+# Create paths for caching locations
+mkdir -p /usr/local/bamboo/docker-images  /usr/local/bamboo/.m2 \
+	&& chown -R ${RUN_USER}:${RUN_GROUP} /usr/local/bamboo
+
 # daemon.json configuration
 mkdir -p /etc/docker
 touch /etc/docker/daemon.json
@@ -21,7 +25,8 @@ cat <<EOT >> /etc/docker/daemon.json
   "log-opts": {
       "max-size": "100m",
       "max-file": "5"
-  }
+  },
+	"graph": "/usr/local/bamboo/docker-images"
 }
 EOT
 chown -R root:docker /etc/docker
