@@ -20,7 +20,7 @@ RUN /scripts/config.all.sh
 
 # Overwrite entrypoint command to start services before bamboo agent
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod a+wrx /entrypoint.sh
+RUN chmod a+wrx /entrypoint.sh # Required due to permission loss on Windows
 CMD ["/entrypoint.sh"]
 
 #### Install maven
