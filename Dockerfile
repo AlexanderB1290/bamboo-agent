@@ -23,9 +23,9 @@ RUN chmod a+wrx /entrypoint.sh
 CMD ["/entrypoint.sh"]
 
 ### Install maven
-ARG MVN_HOME=/usr/share/maven
-COPY --from=maven ${MVN_HOME} ${MVN_HOME}
-RUN ln -s ${MVN_HOME} /opt/maven
+ENV MAVEN_HOME=/usr/share/maven
+COPY --from=maven /usr/share/maven ${MAVEN_HOME}
+RUN ln -s ${MAVEN_HOME} /opt/maven
 
 ### Install Sonar Scanner
 ARG SONAR_DIR=/opt/sonar-scanner
@@ -34,7 +34,7 @@ ENV SONAR_SCANNER_HOME ${SONAR_DIR}
 
 # Update capabilities as RUN_USER
 USER ${RUN_USER}
-RUN /bamboo-update-capability.sh "system.builder.mvn3.Maven 3.8.6" ${MVN_HOME} \
+RUN /bamboo-update-capability.sh "system.builder.mvn3.Maven 3.8.6" ${MAVEN_HOME} \
     && /bamboo-update-capability.sh "system.git.executable" /usr/bin/git \
     && /bamboo-update-capability.sh "Docker" /usr/bin/docker \
     && /bamboo-update-capability.sh "system.builder.sos" ${SONAR_DIR}
