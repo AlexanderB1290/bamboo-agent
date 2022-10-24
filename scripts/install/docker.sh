@@ -12,6 +12,6 @@ chmod a+r /etc/apt/keyrings/docker.gpg
 
 # Install engine
 apt-get update
-apt-get install -y \
+apt-get install -y --no-install-recommends \
   docker-ce docker-ce-cli \
   containerd.io docker-compose-plugin
