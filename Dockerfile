@@ -37,7 +37,7 @@ COPY --from=sonars /opt/sonar-scanner ${SONAR_SCANNER_HOME}
 #  - "system.jdk.JDK 1.11" ${JAVA_HOME}/bin/java
 #  - "Python" /usr/bin/python3
 #  - "Python 3" /usr/bin/python3
-#  - "Git"  /usr/bin/git # NOTE: not set on correct capability in the base image, thus setting it here
+#  - "Git"  /usr/bin/git # NOTE: not set on correct capability in the base image and cause connection issues, thus setting it here
 USER ${RUN_USER}
 RUN /bamboo-update-capability.sh "system.builder.mvn3.Maven 3" ${MAVEN_HOME} \
     && /bamboo-update-capability.sh "system.git.executable" /usr/bin/git \
