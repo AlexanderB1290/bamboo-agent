@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [ "$DEBUG_MODE" == "true" ]; then
+	set -x
+fi
+
 # Add GPG key
 mkdir -p /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
