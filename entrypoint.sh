@@ -6,4 +6,4 @@
 
 ### Start the bamboo agent
 # Deescalate permissions to ${RUN_USER}
-#python3 /entrypoint.py
+python3 /entrypoint.py
