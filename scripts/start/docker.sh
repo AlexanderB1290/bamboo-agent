@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [ "$DEBUG_MODE" == "true" ]; then
+	set -x
+fi
+
 service docker start
 service docker status
 
