@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [ "$DEBUG_MODE" == "true" ]; then
+	set -x
+fi
+
 DOC_USERNAME=<docker_hub_username>
 
 # Add user to groups
