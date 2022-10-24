@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export DEBUG_MODE=false
+
 {
   /scripts/start/docker.sh
 } || {
