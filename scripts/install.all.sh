@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export DEBUG_MODE=false
+
 {
   /scripts/install/prerequsites.sh
   /scripts/install/docker.sh
