@@ -1,0 +1,131 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "common.names.fullname" . }}
+  labels:
+  {{- include "common.labels.commonLabels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+  {{- include "common.labels.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config-jvm: {{ include (print $.Template.BasePath "/config-jvm.yaml") . | sha256sum }}        
+        {{- include "agent.podAnnotations" . | nindent 8 }}
+      labels:
+        {{- include "common.labels.selectorLabels" . | nindent 8 }}
+        {{- include "agent.podLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "agent.serviceAccountName" . }}
+      terminationGracePeriodSeconds: {{ .Values.agent.shutdown.terminationGracePeriodSeconds }}
+      {{- if .Values.agent.securityContextEnabled }}
+      {{- with .Values.agent.securityContext }}
+      securityContext:
+        {{ toYaml . | nindent 8 }}
+        {{- $securityContext := . | default dict}}
+        {{- if not $securityContext.fsGroup }}
+        fsGroup: 2005
+        {{- end }}
+      {{- end }}
+      {{- end }}
+      initContainers:
+        {{- include "agent.additionalInitContainers" . | nindent 8 }}
+      volumes:
+        - name: local-build-dir-cache
+          persistentVolumeClaim:
+            claimName: pvc-local-bamboo-agent-build-dir-cache
+        - name: local-mvn-docker-cache
+          persistentVolumeClaim:
+            claimName: pvc-bamboo-agent-di-mvn-cache
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ include "agent.image" . | quote }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            {{ with .Values.agent.securityToken.secretName }}
+            - name: SECURITY_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ . }}
+                  key: {{ $.Values.agent.securityToken.secretKey }}
+            {{ end }}            
+            - name: BAMBOO_SERVER
+              value: {{ include "agent.bambooServerServiceDns" . }}
+            - name: WRAPPER_JAVA_INITMEMORY
+              valueFrom:
+                configMapKeyRef:
+                  key: min_heap
+                  name: {{ include "common.names.fullname" . }}-jvm-config
+            - name: WRAPPER_JAVA_MAXMEMORY
+              valueFrom:
+                configMapKeyRef:
+                  key: max_heap
+                  name: {{ include "common.names.fullname" . }}-jvm-config
+            {{- include "agent.additionalEnvironmentVariables" . | nindent 12 }}
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+          
+          volumeMounts:
+            - mountPath: /var/atlassian/application-data/bamboo-agent/xml-data/build-dir
+              name: local-build-dir-cache
+            - mountPath: /usr/local/bamboo
+              subPathExpr: $(POD_NAME)
+              name: local-mvn-docker-cache
+          startupProbe:
+            exec:
+              command: ["sh", "-c", {{ .Values.agent.startupProbe.command | quote }}]
+            initialDelaySeconds: {{ .Values.agent.startupProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.agent.startupProbe.periodSeconds }}
+            failureThreshold: {{ .Values.agent.startupProbe.failureThreshold }}
+
+          readinessProbe:
+            exec:
+              command: ["sh", "-c", {{ .Values.agent.readinessProbe.command | quote }}]
+            initialDelaySeconds: {{ .Values.agent.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.agent.readinessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.agent.readinessProbe.failureThreshold }}
+
+          {{- with .Values.agent.containerSecurityContext}}
+          securityContext:
+          {{- toYaml . | nindent 12}}
+          {{- end}}
+
+          {{- with .Values.agent.resources.container }}
+          resources:
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          {{ if .Values.agent.additionalPorts }}
+          ports:
+          {{- include "agent.additionalPorts" . | nindent 12 }}
+          {{- end }}
+
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", {{ .Values.agent.shutdown.command | quote }}]
+      {{- include "agent.additionalContainers" . | nindent 8 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.agent.topologySpreadConstraints }}
+      topologySpreadConstraints:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.schedulerName }}
+      schedulerName: {{ .Values.schedulerName  | quote }}
+      {{- end }}

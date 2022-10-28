@@ -1,0 +1,35 @@
+annotations:
+  artifacthub.io/changes: |
+    - kind: added
+      description: Make pod securityContext optional
+      links:
+      - name: Github PR
+        url: https://github.com/atlassian/data-center-helm-charts/pull/389
+    - kind: changed
+      description: Bamboo Agent updated to 8.2.4 version
+      links:
+      - name: Github PR
+        url: https://github.com/atlassian/data-center-helm-charts/pull/430
+  artifacthub.io/containsSecurityUpdates: "false"
+apiVersion: v2
+appVersion: 8.2.4
+dependencies:
+- name: common
+  repository: https://atlassian.github.io/data-center-helm-charts
+  version: 1.0.0
+description: A chart for installing Bamboo Data Center remote agents on Kubernetes
+home: https://www.atlassian.com/software/bamboo
+icon: https://atlassian.github.io/data-center-helm-charts/icons/bamboo.svg
+keywords:
+- Bamboo
+- Bamboo Agent
+- Bamboo Data Center
+- Bamboo DC
+- Atlassian
+kubeVersion: '>=1.19.x-0'
+name: bamboo-agent
+sources:
+- https://github.com/atlassian/data-center-helm-charts
+- https://bitbucket.org/atlassian-docker/docker-bamboo-agent-base
+type: application
+version: 1.5.0
