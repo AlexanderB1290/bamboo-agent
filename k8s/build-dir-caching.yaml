@@ -1,0 +1,37 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pv-local-bamboo-agent-build-dir-cache
+  namespace: atlassian
+  labels:
+    app: bamboo
+    type: local
+spec:
+  storageClassName: microk8s-hostpath
+  capacity:
+    storage: 200Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  claimRef:
+    namespace: atlassian
+    name: pvc-local-bamboo-agent-build-dir-cache
+  hostPath:
+    path: "/data/build-dir-cache"
+
+---
+
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pvc-local-bamboo-agent-build-dir-cache
+  namespace: atlassian
+  labels:
+    app: bamboo
+spec:
+  storageClassName: microk8s-hostpath
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 200Gi
