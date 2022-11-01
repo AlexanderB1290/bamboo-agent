@@ -25,7 +25,7 @@ The following prerequisites are required in addition to run this docker image:
 
 # Configuration
 
-Before you can start using the docker image as full fledge agent, there are some prerequisites that need to be met and some additional configurations to be performed.
+Before you can start using the docker image as full fledge agent, there are some additional configurations that need to be performed.
 
 1. Make sure your Bamboo server is running and has remote agents support enabled. To enable it, go to **Administration > Agents console**.
 2. Update Docker Hub credentials to avoid docker pull rate limit.
@@ -47,7 +47,7 @@ Before you can start using the docker image as full fledge agent, there are some
     docker build -t <docker hub repo>/<image name>:<image version> .
     docker push <docker hub repo>/<image name>:<image version>
     ```
-6. Update the ```values.yaml``` for the updated Helm charts.
+6. Update the ```helm-chart/values/values.yaml``` for the updated Helm charts or create a new values to use.
    * Provide your docker image from Docker Hub
    * Provide your credentials for Docker Hub
 7. Deploy the Bamboo agents using the updated Helm Charts
