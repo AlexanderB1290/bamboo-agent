@@ -42,7 +42,7 @@ Before you can start using the docker image as full fledge agent, there are some
    kubectl create -f k8s/build-dir-caching.yaml
    kubectl create -f k8s/mvn-docker-caching.yaml
    ```
-5. Build and push your docker image to Docker Hub.
+5. Build and push your docker image to Docker Hub private repository.
     ```shell
     docker build -t <docker hub repo>/<image name>:<image version> .
     docker push <docker hub repo>/<image name>:<image version>
