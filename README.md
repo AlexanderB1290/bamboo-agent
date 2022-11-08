@@ -5,7 +5,16 @@ To learn more about Bamboo, see: https://www.atlassian.com/software/bamboo
 
 The following Bamboo docker image agents is extension of [Atlassian's Bamboo base image](https://bitbucket.org/atlassian-docker/docker-bamboo-agent-base/src/master/).
 
-# Overview
+## Table of Content
+* [Overview](#overview)
+* [Prerequisites](#prerequisites)
+* [Configuration](#config)
+* [Extending the capabilities of the image](#extend)
+  * [Installation scripts](#extend_install)
+  * [Configuration scripts](#extend_config)
+  * [Start-Up scripts](#extend_start)
+
+# Overview <a name="overview"/>
 
 This Docker container makes it easy to get a Bamboo Remote Agent up and running. It is intended to be used as a ready to run Bamboo agent in K8S cluster and have the following capabilities:
 
@@ -16,14 +25,14 @@ This Docker container makes it easy to get a Bamboo Remote Agent up and running.
 * Sonar Scanner 4.7
 * Docker in Docker (DinD) 20.10
 
-# Prerequisites
+# Prerequisites <a name="prerequisites"/>
 
 The following prerequisites are required in addition to run this docker image:
 * Installed helm
 * Installed and configured K8S cluster. Note that the configuration describe the process using ```microk8s```.
 * Persistent volume and claim for caching Bamboo jobs and docker images
 
-# Configuration
+# Configuration <a name="config"/>
 
 Before you can start using the docker image as full fledge agent, there are some additional configurations that need to be performed.
 
@@ -55,7 +64,7 @@ Before you can start using the docker image as full fledge agent, there are some
     helm install bamboo-agent helm-chart/bamboo-agent/ --values helm-chart/bamboo-agent/values.yaml --wait
     ```
 
-# Extending the capabilities of the image
+# Extending the capabilities of the image <a name="extend" />
 
 This Docker image contains most used capabilities for building docker images and Maven project. If you need additional capabilities you can extend the image to suit your needs. Using the scripts from their corresponding the folder, new capabilities can be installed, configured, started and stopped.
 ```tree
@@ -68,19 +77,19 @@ scripts/
 ├─ start.all.sh
 ```
 
-## Installation scripts
+## Installation scripts <a name="extend_install" />
 
 To install a new capability create a shell script under the folder ```scripts/install``` with an appropriate name and add the required commands to install the capability. 
 
 After that add the path to the script to ```scripts/install.all.sh```, so the capability can be installed during building of the docker image. This installation script is ran first. If you require additional packages, you can add them to the ```scripts/install/preqreuisites.sh``` which is taking care of installing any additional packages.
 
-## Configuration scripts
+## Configuration scripts <a name="extend_config" />
 
 To configure an installed capability create a shell script under the folder ```scripts/config``` with an appropriate name and add the required commands to configure the installed capability.
 
 After that add the path to the script to ```scripts/config.all.sh```, so the installed capability can be configured after its installation during building of the docker image. Note that first the script for installing all capabilities is run before running the script for configuring the capabilities.
 
-## Start-Up scripts
+## Start-Up scripts <a name="extend_start" />
 
 To start any services or run specific commands during starting of the container, create a script under the folder ```scripts/start``` with an appropriate name and add the required commands for starting or running commands during start up of the container.
 
