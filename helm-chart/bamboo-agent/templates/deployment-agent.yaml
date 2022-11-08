@@ -72,6 +72,7 @@ spec:
           
           volumeMounts:
             - mountPath: /var/atlassian/application-data/bamboo-agent/xml-data/build-dir
+              subPathExpr: $(POD_NAME)
               name: local-build-dir-cache
             - mountPath: /usr/local/bamboo
               subPathExpr: $(POD_NAME)
