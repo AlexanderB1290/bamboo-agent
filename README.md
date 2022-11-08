@@ -57,8 +57,36 @@ Before you can start using the docker image as full fledge agent, there are some
 
 # Extending the capabilities of the image
 
-This Docker image contains most used capabilities for building docker images and Maven project. If you need additional capabilities you can extend the image to suit your needs.
+This Docker image contains most used capabilities for building docker images and Maven project. If you need additional capabilities you can extend the image to suit your needs. Using the scripts from their corresponding the folder, new capabilities can be installed, configured, started and stopped.
+```tree
+scripts/
+├─ install/
+├─ config/
+├─ start/
+├─ install.all.sh
+├─ config.all.sh
+├─ start.all.sh
+```
 
-Example of extending the agent base image by Maven and Git:
+## Installation scripts
 
+To install a new capability create a shell script under the folder ```scripts/install``` with an appropriate name and add the required commands to install the capability. 
+
+After that add the path to the script to ```scripts/install.all.sh```, so the capability can be installed during building of the docker image. This installation script is ran first. If you require additional packages, you can add them to the ```scripts/install/preqreuisites.sh``` which is taking care of installing any additional packages.
+
+## Configuration scripts
+
+To configure an installed capability create a shell script under the folder ```scripts/config``` with an appropriate name and add the required commands to configure the installed capability.
+
+After that add the path to the script to ```scripts/config.all.sh```, so the installed capability can be configured after its installation during building of the docker image. Note that first the script for installing all capabilities is run before running the script for configuring the capabilities.
+
+## Start-Up scripts
+
+To start any services or run specific commands during starting of the container, create a script under the folder ```scripts/start``` with an appropriate name and add the required commands for starting or running commands during start up of the container.
+
+After that add the path to script to ```scripts/start.all.sh```, which is run when the container is starting, but before starting the Bamboo agent executable. 
+
+Note the following:
+   * The start-up script need to complete under ```120 seconds (2 minute)```, otherwise you will need to edit the values for ```startupProbe``` and ```readinessProbe``` to increase the timeout limit.
+   * Running start-up scripts after starting the Bamboo agent, need to be run without elevated permissions, as non-root user.
 
